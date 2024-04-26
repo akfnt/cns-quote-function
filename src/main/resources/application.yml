@@ -1,0 +1,9 @@
+server:
+  port: 9102
+
+spring:
+  application:
+    name: cns-quote-function
+  cloud:
+    function:
+      definition: allQuotes       # 루트 엔드포인트로 사용할 함수 정의

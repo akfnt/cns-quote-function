@@ -23,6 +23,10 @@ ext {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.cloud:spring-cloud-function-web'
+
+	compileOnly 'org.projectlombok:lombok:1.18.32'
+	annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }
@@ -35,4 +39,18 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'docker.io/paketobuildpacks/builder-jammy-tiny'		// 컨테이너 이미지 크기를 최소로 하기 위해 패키토 빌드팩의 tiny 버전을 사용한다
+	environment = ['BP_NATIVE_IMAGE': 'true']						// GraalVM 지원을 활성화하고 컨테이너화된 네이티브 이미지를 생성
+	imageName = "${project.name}"
+
+	docker {
+		publishRegistry {
+			username = project.findProperty("registryUsername")
+			password = project.findProperty("registryToken")
+			url = project.findProperty("registryUrl")
+		}
+	}
 }
